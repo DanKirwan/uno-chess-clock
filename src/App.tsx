@@ -1,7 +1,6 @@
 import { Button, ButtonGroup, Grid2, imageListItemClasses, Stack, TextField } from '@mui/material';
 import { findIndex, range } from 'lodash';
 import { useState } from 'react';
-import './App.css';
 
 import { useIntervalWhen, useKey } from "rooks";
 import Timer from './components/Timer';
@@ -9,14 +8,17 @@ import Timer from './components/Timer';
 import useSound from 'use-sound';
 import next from './next.m4a';
 import lose from './lose.m4a';
+import flip from './wabada.m4a';
 
 
 const MS_PER_SECOND = 1000;
 
 const interval = 10;
+
 function App() {
 
   const [playNext] = useSound(next);
+  const [playFlip] = useSound(flip);
   const [playLose] = useSound(lose);
 
   const [playing, setPlaying] = useState(false);
@@ -25,11 +27,12 @@ function App() {
   const [playerCount, setPlayerCount] = useState(5)
 
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState<number>(0);
-
+  const [names, setNames] = useState<string[]>([])
   const [times, setTimes] = useState<number[]>([])
   const reset = () => {
     setCurrentPlayerIndex(0);
     setTimes(range(0, playerCount).map(_ => startTime));
+    setNames(range(0, playerCount).map(_ => ""));
     setPlaying(false);
   }
 
@@ -45,21 +48,36 @@ function App() {
   }, interval, playing)
 
 
-  useKey('Space', (e) => {
-    playNext();
+  const [multiplier, setMultiplier] = useState(1);
+
+  const doNext = (multiplier: number) => {
     if (times[currentPlayerIndex] > 0) setTimes(c => c.map((x, i) => i === currentPlayerIndex ? x + increment : x))
     setCurrentPlayerIndex(x => {
       let index = x;
       const validIndices = times.map((t, i) => [t, i]).filter(([t, i]) => t > 0).map(([t, i]) => i);
       if (validIndices.length === 0) return x;
-      index = (index + 1) % times.length
+      index = (index + multiplier + times.length) % times.length
+      console.log((index + multiplier + times.length) % times.length);
 
       while (!validIndices.includes(index)) {
-        index = (index + 1) % times.length
+        index = (index + multiplier + times.length) % times.length
       };
       return index;
     })
+  }
+  useKey('Space', (e) => {
+    if (!playing) return;
+    playNext();
+    doNext(multiplier);
   });
+
+  useKey('Enter', (e) => {
+    if (!playing) return;
+    playFlip();
+    doNext(-multiplier);
+    setMultiplier(m => -m);
+  });
+
 
 
   return (
@@ -74,10 +92,14 @@ function App() {
         </ButtonGroup>
       </Stack>
 
-      <Stack spacing={2}>
+      <Stack spacing={2} width={'100%'}>
 
 
-        {times.map((x, i) => <Timer milliseconds={x} active={i === currentPlayerIndex && playing} />)}
+        {times.map((x, i) => <Timer
+          name={names[i]}
+          setName={(name) => setNames(ns => ns.map((n, nameIndex) => i === nameIndex ? name : n))}
+          milliseconds={x}
+          active={i === currentPlayerIndex && playing} />)}
       </Stack>
 
 
