@@ -14,10 +14,13 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.4.1",
     "lodash": "^4.17.21",
+    "microdiff": "^1.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "rooks": "^7.14.1",
-    "use-sound": "^4.0.3"
+    "use-sound": "^4.0.3",
+    "zundo": "^2.3.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

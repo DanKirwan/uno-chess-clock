@@ -22,9 +22,9 @@ const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName }) =>
 
         <Stack direction='row' spacing={2}>
             <TextField value={name} onChange={e => setName(e.target.value)} label='Name' />
-            <Button color={milliseconds < 0 ? 'error' : active ? 'success' : 'primary'} size='large' variant='contained'>
+            <Button color={milliseconds <= 0 ? 'error' : active ? 'success' : 'primary'} size='large' variant='contained'>
 
-                {milliseconds < 0 ? (
+                {milliseconds <= 0 ? (
                     <span style={{ fontSize: 24 }}>PLAYER OUT</span>
                 ) : (
                     <span style={{ fontSize: 24 }}>{formatTime(milliseconds)}</span>
