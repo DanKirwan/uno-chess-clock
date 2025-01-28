@@ -52,29 +52,31 @@ function App() {
   }
 
 
+  const remainingPlayers = players.filter(p => p.time > 0).length;
   useIntervalWhen(
     () => {
       tick(interval);
       if (players[currentIndex].time === 0) playLose();
     },
     interval,
-    playing)
+    playing && remainingPlayers > 1)
 
+  const active = playing && remainingPlayers > 1;
   useKey('Space', (e) => {
-    if (!playing) return;
+    if (!active) return;
     playNext();
     finishTurn(increment);
   });
 
   useKey('Enter', (e) => {
-    if (!playing) return;
+    if (!active) return;
     playFlip();
     flipTurn(increment);
   });
 
 
   useKey('Escape', (e) => {
-    if (!playing) return;
+    if (!active) return;
     playReset();
     undo(1);
   });
@@ -136,6 +138,7 @@ function App() {
               setName={(name) => setName(i, name)}
               milliseconds={p.time}
               active={i === currentIndex && playing}
+              gameFinished={remainingPlayers === 1}
             />
           )
           )}

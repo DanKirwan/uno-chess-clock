@@ -6,6 +6,7 @@ interface TimerProps {
     active: boolean;
     name: string;
     setName: (name: string) => void;
+    gameFinished: boolean;
 }
 
 const formatTime = (milliseconds: number): string => {
@@ -17,7 +18,7 @@ const formatTime = (milliseconds: number): string => {
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
 };
 
-const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName }) => {
+const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName, gameFinished }) => {
     return (
         <Card>
             <CardContent>
@@ -25,18 +26,24 @@ const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName }) =>
                 <Stack direction='row' spacing={2}  >
                     <TextField value={name} onChange={e => setName(e.target.value)} label='Name' sx={{ width: 200 }} />
                     <Button
-                        color={milliseconds <= 0 ? 'error' : active ? 'success' : 'primary'}
+                        color={milliseconds <= 0
+                            ? 'error'
+                            : (active || gameFinished)
+                                ? 'success'
+                                : 'primary'}
                         size='large'
                         variant='contained'
                         fullWidth
 
                     >
 
-                        {milliseconds <= 0 ? (
-                            <span style={{ fontSize: 24 }}>PLAYER OUT</span>
-                        ) : (
-                            <span style={{ fontSize: 24 }}>{formatTime(milliseconds)}</span>
-                        )}
+                        {
+                            milliseconds <= 0
+                                ? <span style={{ fontSize: 24 }}>PLAYER OUT</span>
+                                : gameFinished
+                                    ? <span style={{ fontSize: 24 }}>YOU WIN!</span>
+                                    : <span style={{ fontSize: 24 }}>{formatTime(milliseconds)}</span>
+                        }
                     </Button>
                 </Stack>
             </CardContent>
