@@ -16,7 +16,7 @@ import { ControlsDialog } from './components/ControlsDialog';
 
 const MS_PER_SECOND = 1000;
 
-const interval = 10;
+const interval = 100;
 
 
 function App() {
@@ -68,31 +68,48 @@ function App() {
     playing && remainingPlayers > 1)
 
   const active = playing && remainingPlayers > 1;
-  useKey('Space', (e) => {
+  const doTurn = () => {
     if (!active) return;
     playNext();
     finishTurn(increment);
-  });
+  }
 
-  useKey('Enter', (e) => {
+  const doFlip = () => {
     if (!active) return;
     playFlip();
     flipTurn(increment);
-  });
+  }
 
-
-  useKey('Escape', (e) => {
+  const doUndo = () => {
     if (!active) return;
     playReset();
     undo(1);
-  });
+  }
+
+  useKey('Space', (e) => doTurn());
+  useKey('Enter', (e) => doFlip());
+  useKey('Escape', (e) => doUndo());
 
   return (
-    <Stack spacing={4} width='100vw' alignItems='center'>
+    <Stack
+      spacing={4}
+      width='100vw'
+      alignItems='center'
+    >
       <ControlsDialog open={helpOpen} handleClose={() => setHelpOpen(false)} />
       <Typography variant='h2'>Bullet Uno!</Typography>
-      <Stack direction='row' justifyContent='space-between' spacing={1}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+
+        justifyContent='space-between'
+        spacing={1}
+        sx={{
+          width: { xs: '90%', md: '70%' },
+          // alignItems: { xs: 'stretch', sm: 'center' }
+        }}
+      >
         <TextField
+          fullWidth
           type='number'
           value={playerCount.toString()}
           onChange={e => setPlayerCount(+e.target.value)}
@@ -100,18 +117,28 @@ function App() {
           label='Player Count'
         />
         <TextField
+          fullWidth
           type='number'
           value={(increment / MS_PER_SECOND).toString()}
           onChange={e => setIncrement(+e.target.value * MS_PER_SECOND)}
           label='Time Increment (s)'
         />
         <TextField
+          fullWidth
           type='number'
           value={(startTime / MS_PER_SECOND).toString()}
           onChange={e => setStartTime(+e.target.value * MS_PER_SECOND)}
           label='Initial Time (s)'
         />
-        <Button onClick={() => reset()} variant='contained' color='error' >Reset</Button>
+        <Button
+          onClick={() => reset()}
+          variant='contained'
+          color='error'
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
+
+        >
+          Reset
+        </Button>
 
         <Stack alignItems='center' justifyContent='center'>
           <IconButton onClick={() => setHelpOpen(true)}>
@@ -121,8 +148,45 @@ function App() {
       </Stack>
 
 
+      <Stack
+        direction='column'
+        spacing={2}
+        sx={{
+          width: { xs: '90%', md: '70%' },
+          display: { xs: 'inherit', md: 'none' }
+        }}
+      >
+        <Divider />
+        <ButtonGroup orientation='vertical' size='large' fullWidth>
+          <Button
+            onClick={() => doUndo()}
+            variant='contained'
+            color='warning'
+          >
+            Undo
+          </Button>
+          <Button
+            onClick={() => doTurn()}
+            variant='contained'
+          >
+            End Turn
+          </Button>
+          <Button
+            onClick={() => doFlip()}
+            variant='contained'
+            color='secondary'
+          >
+            Play Flip Card
+          </Button>
 
-      <Stack spacing={2} width='60vw'>
+        </ButtonGroup>
+
+      </Stack>
+
+
+
+      <Stack spacing={2} sx={{ width: { xs: '90%', sm: '60%' } }}>
+        <Divider />
         <Button
           fullWidth
           onClick={() => start()}

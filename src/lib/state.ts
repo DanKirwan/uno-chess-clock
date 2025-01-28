@@ -66,7 +66,8 @@ export const appStore = createStore<StoreState>()(
                 .value();
             return {
                 players: newPlayers,
-                currentIndex: 0
+                currentIndex: 0,
+                direction: 1
             }
         }),
         setName: (index: number, name: string) => set(({ players }) => ({ players: updatePlayer(players, index, p => ({ ...p, name })) })),
