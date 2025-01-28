@@ -5,11 +5,12 @@ import { useIntervalWhen, useKey } from "rooks";
 import Timer from './components/Timer';
 
 import useSound from 'use-sound';
-import resetNoise from './gdonk.m4a';
+import resetNoise from './audio/gdonk.m4a';
 import { useBaseStore, useTemporalStore } from './lib/state';
-import lose from './lose.m4a';
-import next from './next.m4a';
-import flip from './wabada.m4a';
+import lose from './audio/lose.m4a';
+import next from './audio/next.m4a';
+import flip from './audio/wabada.m4a';
+import weoob from './audio/weoob.m4a';
 import HelpIcon from '@mui/icons-material/Help';
 import { ControlsDialog } from './components/ControlsDialog';
 
@@ -24,6 +25,7 @@ function App() {
   const [playFlip] = useSound(flip);
   const [playLose] = useSound(lose);
   const [playReset] = useSound(resetNoise);
+  const [playFinish] = useSound(weoob);
 
   const [playing, setPlaying] = useState(false);
   const [increment, setIncrement] = useState(2 * MS_PER_SECOND);
@@ -56,7 +58,11 @@ function App() {
   useIntervalWhen(
     () => {
       tick(interval);
-      if (players[currentIndex].time === 0) playLose();
+      if (players[currentIndex].time - interval === 0) {
+        if (remainingPlayers == 2) playFinish();
+        else playLose();
+      }
+
     },
     interval,
     playing && remainingPlayers > 1)
