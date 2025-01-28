@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Divider, Stack, TextField, Typography } from '@mui/material';
+import { Button, ButtonGroup, Divider, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useIntervalWhen, useKey } from "rooks";
@@ -10,7 +10,8 @@ import { useBaseStore, useTemporalStore } from './lib/state';
 import lose from './lose.m4a';
 import next from './next.m4a';
 import flip from './wabada.m4a';
-
+import HelpIcon from '@mui/icons-material/Help';
+import { ControlsDialog } from './components/ControlsDialog';
 
 const MS_PER_SECOND = 1000;
 
@@ -28,6 +29,7 @@ function App() {
   const [increment, setIncrement] = useState(2 * MS_PER_SECOND);
   const [startTime, setStartTime] = useState(30 * MS_PER_SECOND);
   const [playerCount, setPlayerCount] = useState(2);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const { currentIndex, players, tick, finishTurn, flipTurn, reset: resetStore, setName } = useBaseStore((state) => state);
   const { undo, clear } = useTemporalStore((state) => state);
@@ -79,6 +81,7 @@ function App() {
 
   return (
     <Stack spacing={4} width='100vw' alignItems='center'>
+      <ControlsDialog open={helpOpen} handleClose={() => setHelpOpen(false)} />
       <Typography variant='h2'>Bullet Uno!</Typography>
       <Stack direction='row' justifyContent='space-between' spacing={1}>
         <TextField
@@ -101,12 +104,25 @@ function App() {
           label='Initial Time (s)'
         />
         <Button onClick={() => reset()} variant='contained' color='error' >Reset</Button>
+
+        <Stack alignItems='center' justifyContent='center'>
+          <IconButton onClick={() => setHelpOpen(true)}>
+            <HelpIcon />
+          </IconButton>
+        </Stack>
       </Stack>
 
 
 
       <Stack spacing={2} width='60vw'>
-        <Button fullWidth onClick={() => start()} variant='contained' size='large'>
+        <Button
+          fullWidth
+          onClick={() => start()}
+          variant='contained'
+          size='large'
+          color='warning'
+          disabled={playing}
+        >
           Start
         </Button>
 
@@ -125,7 +141,7 @@ function App() {
           )}
         </Stack>
       </Stack>
-    </Stack>
+    </Stack >
   )
 }
 
