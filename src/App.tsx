@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Stack, TextField } from '@mui/material';
+import { Button, ButtonGroup, Divider, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 
 import { useIntervalWhen, useKey } from "rooks";
@@ -78,8 +78,9 @@ function App() {
   });
 
   return (
-    <Stack spacing={6}>
-      <Stack direction='row' spacing={1}>
+    <Stack spacing={4} width='100vw' alignItems='center'>
+      <Typography variant='h2'>Bullet Uno!</Typography>
+      <Stack direction='row' justifyContent='space-between' spacing={1}>
         <TextField
           type='number'
           value={playerCount.toString()}
@@ -91,32 +92,38 @@ function App() {
           type='number'
           value={(increment / MS_PER_SECOND).toString()}
           onChange={e => setIncrement(+e.target.value * MS_PER_SECOND)}
-          label='Time Increment'
+          label='Time Increment (s)'
         />
         <TextField
           type='number'
           value={(startTime / MS_PER_SECOND).toString()}
           onChange={e => setStartTime(+e.target.value * MS_PER_SECOND)}
-          label='Initial Time'
+          label='Initial Time (s)'
         />
-        <ButtonGroup>
-          <Button onClick={() => reset()} variant='contained' color='error' >Reset</Button>
-          <Button onClick={() => start()} variant='contained'>Start</Button>
-        </ButtonGroup>
+        <Button onClick={() => reset()} variant='contained' color='error' >Reset</Button>
       </Stack>
 
-      <Stack spacing={2} width={'100%'}>
 
-        {players.map((p, i) => (
-          <Timer
-            key={i}
-            name={p.name}
-            setName={(name) => setName(i, name)}
-            milliseconds={p.time}
-            active={i === currentIndex && playing}
-          />
-        )
-        )}
+
+      <Stack spacing={2} width='60vw'>
+        <Button fullWidth onClick={() => start()} variant='contained' size='large'>
+          Start
+        </Button>
+
+        <Divider />
+        <Stack spacing={1}>
+
+          {players.map((p, i) => (
+            <Timer
+              key={i}
+              name={p.name}
+              setName={(name) => setName(i, name)}
+              milliseconds={p.time}
+              active={i === currentIndex && playing}
+            />
+          )
+          )}
+        </Stack>
       </Stack>
     </Stack>
   )

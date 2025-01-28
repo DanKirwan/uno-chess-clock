@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Paper, Stack, TextField } from '@mui/material';
 import React from 'react';
 
 interface TimerProps {
@@ -19,10 +19,15 @@ const formatTime = (milliseconds: number): string => {
 
 const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName }) => {
     return (
+        <Stack direction='row' spacing={2}  >
+            <TextField value={name} onChange={e => setName(e.target.value)} label='Name' sx={{ width: 200 }} />
+            <Button
+                color={milliseconds <= 0 ? 'error' : active ? 'success' : 'primary'}
+                size='large'
+                variant='contained'
+                fullWidth
 
-        <Stack direction='row' spacing={2}>
-            <TextField value={name} onChange={e => setName(e.target.value)} label='Name' />
-            <Button color={milliseconds <= 0 ? 'error' : active ? 'success' : 'primary'} size='large' variant='contained'>
+            >
 
                 {milliseconds <= 0 ? (
                     <span style={{ fontSize: 24 }}>PLAYER OUT</span>
@@ -31,7 +36,6 @@ const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName }) =>
                 )}
             </Button>
         </Stack>
-
     );
 };
 
