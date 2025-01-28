@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Paper, Stack, TextField } from '@mui/material';
+import { Button, Card, CardContent, Stack, TextField } from '@mui/material';
 import React from 'react';
 
 interface TimerProps {
@@ -39,10 +39,10 @@ const Timer: React.FC<TimerProps> = ({ milliseconds, active, name, setName, game
 
                         {
                             milliseconds <= 0
-                                ? <span style={{ fontSize: 24 }}>PLAYER OUT</span>
+                                ? <span style={{ fontSize: 20 }}>YOU LOSE!</span>
                                 : gameFinished
-                                    ? <span style={{ fontSize: 24 }}>YOU WIN!</span>
-                                    : <span style={{ fontSize: 24 }}>{formatTime(milliseconds)}</span>
+                                    ? <span style={{ fontSize: 20 }}>YOU WIN!</span>
+                                    : <span style={{ fontSize: 20 }}>{formatTime(milliseconds)}</span>
                         }
                     </Button>
                 </Stack>

@@ -1,18 +1,18 @@
-import { Button, ButtonGroup, Divider, IconButton, Stack, TextField, Typography } from '@mui/material';
+import { Button, ButtonGroup, Divider, IconButton, Stack, TextField, Typography, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 
 import { useIntervalWhen, useKey } from "rooks";
 import Timer from './components/Timer';
 
+import HelpIcon from '@mui/icons-material/Help';
 import useSound from 'use-sound';
 import resetNoise from './audio/gdonk.m4a';
-import { useBaseStore, useTemporalStore } from './lib/state';
 import lose from './audio/lose.m4a';
 import next from './audio/next.m4a';
 import flip from './audio/wabada.m4a';
 import weoob from './audio/weoob.m4a';
-import HelpIcon from '@mui/icons-material/Help';
 import { ControlsDialog } from './components/ControlsDialog';
+import { useBaseStore, useTemporalStore } from './lib/state';
 
 const MS_PER_SECOND = 1000;
 
@@ -21,6 +21,7 @@ const interval = 100;
 
 function App() {
 
+  const large = useMediaQuery("(min-width:600px)");
   const [playNext] = useSound(next);
   const [playFlip] = useSound(flip);
   const [playLose] = useSound(lose);
@@ -86,9 +87,9 @@ function App() {
     undo(1);
   }
 
-  useKey('Space', (e) => doTurn());
-  useKey('Enter', (e) => doFlip());
-  useKey('Escape', (e) => doUndo());
+  useKey('Space', () => doTurn());
+  useKey('Enter', () => doFlip());
+  useKey('Escape', () => doUndo());
 
   return (
     <Stack
@@ -113,7 +114,7 @@ function App() {
           type='number'
           value={playerCount.toString()}
           onChange={e => setPlayerCount(+e.target.value)}
-          onBlur={e => updatePlayers()}
+          onBlur={() => updatePlayers()}
           label='Player Count'
         />
         <TextField
@@ -148,55 +149,53 @@ function App() {
       </Stack>
 
 
-      <Stack
-        direction='column'
-        spacing={2}
-        sx={{
-          width: { xs: '90%', md: '70%' },
-          display: { xs: 'inherit', md: 'none' }
-        }}
-      >
-        <Divider />
-        <ButtonGroup orientation='vertical' size='large' fullWidth>
-          <Button
-            onClick={() => doUndo()}
-            variant='contained'
-            color='warning'
-          >
-            Undo
-          </Button>
-          <Button
-            onClick={() => doTurn()}
-            variant='contained'
-          >
-            End Turn
-          </Button>
-          <Button
-            onClick={() => doFlip()}
-            variant='contained'
-            color='secondary'
-          >
-            Play Flip Card
-          </Button>
-
-        </ButtonGroup>
-
-      </Stack>
-
-
-
       <Stack spacing={2} sx={{ width: { xs: '90%', sm: '60%' } }}>
-        <Divider />
-        <Button
-          fullWidth
-          onClick={() => start()}
-          variant='contained'
-          size='large'
-          color='warning'
-          disabled={playing}
-        >
-          Start
-        </Button>
+        {!playing ? (
+          <Button
+            fullWidth
+            onClick={() => start()}
+            variant='contained'
+            size='large'
+            color='warning'
+            disabled={playing}
+          >
+            Start
+          </Button>
+        ) : (
+          <ButtonGroup
+            orientation={large ? 'horizontal' : 'vertical'}
+            size='large'
+            fullWidth
+
+          >
+
+            <Button
+              onClick={() => doTurn()}
+              variant='contained'
+              sx={{ fontSize: { xs: 30, sm: 16 } }}
+            >
+              End Turn
+            </Button>
+            <Button
+              onClick={() => doFlip()}
+              variant='contained'
+              color='secondary'
+              sx={{ fontSize: { xs: 30, sm: 16 } }}
+            >
+              Flip Card
+            </Button>
+            <Button
+              onClick={() => doUndo()}
+              variant='contained'
+              color='error'
+              sx={{ fontSize: { xs: 30, sm: 16 } }}
+            >
+              Undo
+            </Button>
+
+          </ButtonGroup>
+        )
+        }
 
         <Divider />
         <Stack spacing={1}>

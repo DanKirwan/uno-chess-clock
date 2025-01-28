@@ -1,7 +1,6 @@
-import { create, createStore } from 'zustand';
-import { temporal, TemporalState } from 'zundo';
 import { chain, range } from 'lodash';
-import diff from 'microdiff';
+import { temporal, TemporalState } from 'zundo';
+import { createStore } from 'zustand';
 import { useStoreWithEqualityFn } from 'zustand/traditional';
 
 type Player = {
